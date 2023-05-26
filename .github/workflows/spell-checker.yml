@@ -1,0 +1,16 @@
+name: Spell Checker Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ko-build/setup-ko@v0.6
+        env:
+          KO_DOCKER_REPO: ghcr.io/${{ github.repository_owner }}/spell-checker
+      - run: ko build --platform=linux/amd64 --output=build/spell-checker ./development/spell-checker
