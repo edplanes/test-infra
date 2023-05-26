@@ -1,0 +1,47 @@
+name: Checkov
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: './'
+          framework: 'dockerfile'
+  github:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkov
+        uses: bridgecrewio/checkov-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          directory: './'
+          framework: 'github_configuration'
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: './'
+          framework: 'terraform'
+  ansible:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: './'
+          framework: 'ansible'
