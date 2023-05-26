@@ -11,4 +11,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ko-build/setup-ko@v0.6
-      - run: ko build --platform=linux/amd64 ./development/spell-checker
+      - run: ko build -B --platform=linux/amd64 ./development/spell-checker
