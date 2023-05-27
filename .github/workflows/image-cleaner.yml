@@ -23,7 +23,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
           image: ghcr.io/edplanes/test-infra/image-cleaner:main
-          run: |
-            /image-cleaner -t ${{ secrets.HCLOUD_TOKEN }} -o 7d -f ${{ matrix.images }} -u
+          shell: /image-cleaner
+          run: -t ${{ secrets.HCLOUD_TOKEN }} -o 7d -f ${{ matrix.images }} -u
             
         
