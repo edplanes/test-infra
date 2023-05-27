@@ -10,17 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	// olderThan is the age of the image in seconds
-	olderThan string
-
-	// filter is a regexp filter for the image name
-	filter string
-
-	// userOnly is a flag to only list images created by the user
-	userOnly bool
-)
-
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list images",
@@ -54,12 +43,6 @@ var listCmd = &cobra.Command{
 			fmt.Printf("%d|%s|%s|%s\n", image.ID, image.Name, image.Type, image.Status)
 		}
 	},
-}
-
-func init() {
-	listCmd.Flags().StringVarP(&olderThan, "older-than", "o", "", "filter images older than")
-	listCmd.Flags().StringVarP(&filter, "filter", "f", "", "filter images by name")
-	listCmd.Flags().BoolVarP(&userOnly, "user-only", "u", false, "only list user images")
 }
 
 func filterImagesByName(filter string, images []*hcloud.Image) []*hcloud.Image {
