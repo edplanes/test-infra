@@ -1,0 +1,25 @@
+name: Spell Checker Build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'development/spell-checker/**'
+      - '.github/workflows/spell-checker.yml'
+      - 'go.mod'
+      - 'go.sum'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build and Push Docker Image to GitHub Packages
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: spell-checker
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io/${{ github.repository }}
+          workdir: spell-checker
