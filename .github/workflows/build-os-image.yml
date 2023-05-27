@@ -22,6 +22,11 @@ jobs:
         uses: hashicorp/setup-packer@main
         with:
           version: 1.8.7
+      - name: Setup public ssh key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PUBLIC_KEY }}
+          name: remote_machines.pub
       - name: Packer Init
         working-directory: ./configs/packer/${{ matrix.os }}
         run: packer init .
