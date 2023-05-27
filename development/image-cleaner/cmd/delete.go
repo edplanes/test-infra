@@ -37,7 +37,11 @@ var deleteCmd = &cobra.Command{
 			images = filterImagesByUser(images)
 		}
 
-		for _, image := range images {
+		for i, image := range images {
+			if i < 2 {
+				continue
+			}
+
 			log.Printf("deleting image %d", image.ID)
 			_, err := client.Image.Delete(cmd.Context(), image)
 			if err != nil {
