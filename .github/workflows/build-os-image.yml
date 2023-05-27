@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'packer/**'
+      - '.github/workflows/build-os-image.yml'
   workflow_dispatch:
 
 jobs:
@@ -21,11 +22,13 @@ jobs:
         uses: hashicorp/setup-packer@main
         with:
           version: 1.8.7
-      - run: cd configs/packer/${{ matrix.os }}
       - name: Packer Init
+        working-directory: ./configs/packer/${{ matrix.os }}
         run: packer init .
       - name: Packer Validate
+        working-directory: ./configs/packer/${{ matrix.os }}
         run: packer validate -var hcloud_token=${{ secrets.GITHUB_TOKEN }} .
       - name: Packer Build
+        working-directory: ./configs/packer/${{ matrix.os }}
         run: packer build -var hcloud_token=${{ secrets.GITHUB_TOKEN }} .
     
