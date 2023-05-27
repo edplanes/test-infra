@@ -1,0 +1,29 @@
+name: Clean Up Old Hetzner Images (Snapshots)
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        images: [db-ubuntu-*, k3s-ubuntu-*, base-ubuntu-*]
+    steps:
+      - name: Clean Up Old Hetzner Images (Snapshots)
+        uses: addnab/docker-run-action@v3
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          image: ghcr.io/edplanes/test-infra/image-cleaner:main
+          run: |
+            /image-cleaner -t ${{ secrets.HCLOUD_TOKEN }} -o 7d -f ${{ matrix.images }} -u
+            
+        
