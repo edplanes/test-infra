@@ -9,6 +9,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -C ./development/spell-checke
 
 FROM debian:10.13-slim
 
+RUN groupadd -r spellchecker && useradd --no-log-init -r -g spellchecker spellchecker
 USER spellchecker
 
 COPY --from=builder /spell-checker /spell-checker
