@@ -23,6 +23,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Image Cleaner
-        run: docker run --rm -it ghcr.io/edplanes/test-infra/image-cleaner:main list -t ${{ secrets.HCLOUD_TOKEN }} -o 168h -f ${{ matrix.images }} -u
+        run: docker run --rm ghcr.io/edplanes/test-infra/image-cleaner:main list -t ${{ secrets.HCLOUD_TOKEN }} -o 168h -f ${{ matrix.images }} -u
             
         
