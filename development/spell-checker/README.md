@@ -1,12 +1,12 @@
 ---
 title: Spell Checker
-excerpt: Wrapper for aspell to spell check files under directory
+excerpt: Wrapper for Aspell to spell check files under directory
 ---
 # Spell Checker
 
 ## Overview
 
-Tool serves as wrapper for aspell, provided to spell check files in given directory
+Tool serves as wrapper for Aspell, provided to spell check files in given directory
 
 ## Usage
 
