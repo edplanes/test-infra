@@ -1,20 +1,8 @@
 name: Checkov
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - '**/*.(tf|tfvars)'
-      - '**/*.(yml|yaml)'
-      - '**/*.json'
-      - '**/Dockerfile'
   pull_request:
     branches: [ main ]
-    paths:
-      - '**/*.(tf|tfvars)'
-      - '**/*.(yml|yaml)'
-      - '**/*.json'
-      - '**/Dockerfile'
 
 jobs:
   docker:
