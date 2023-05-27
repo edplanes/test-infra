@@ -24,6 +24,6 @@ jobs:
           registry: ghcr.io
           image: ghcr.io/edplanes/test-infra/image-cleaner:main
           shell: /image-cleaner
-          run: -t ${{ secrets.HCLOUD_TOKEN }} -o 7d -f ${{ matrix.images }} -u
+          run: list -t ${{ secrets.HCLOUD_TOKEN }} -o 7d -f ${{ matrix.images }} -u
             
         
