@@ -27,8 +27,8 @@ jobs:
         run: packer init .
       - name: Packer Validate
         working-directory: ./configs/packer/${{ matrix.os }}
-        run: packer validate -var hcloud_token=${{ secrets.GITHUB_TOKEN }} .
+        run: packer validate -var hcloud_token=${{ secrets.HCLOUD_TOKEN }} .
       - name: Packer Build
         working-directory: ./configs/packer/${{ matrix.os }}
-        run: packer build -var hcloud_token=${{ secrets.GITHUB_TOKEN }} .
+        run: packer build -var hcloud_token=${{ secrets.HCLOUD_TOKEN }} .
     
