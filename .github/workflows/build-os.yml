@@ -1,0 +1,31 @@
+name: Build OS Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packer/*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@main
+        with:
+          version: 1.8.7
+      - run: cd configs/packer/${{ matrix.os }}
+      - name: Packer Init
+        run: packer init .
+      - name: Packer Validate
+        run: packer validate -var hcloud_token=${{ secrets.GITHUB_TOKEN }} .
+      - name: Packer Build
+        run: packer build -var hcloud_token=${{ secrets.GITHUB_TOKEN }} .
+    
