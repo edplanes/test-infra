@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'packer/*'
+      - 'packer/**'
   workflow_dispatch:
 
 jobs:
