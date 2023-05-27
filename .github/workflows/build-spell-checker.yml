@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - 'development/spell-checker/**'
-      - '.github/workflows/spell-checker.yml'
+      - '.github/workflows/build-spell-checker.yml'
       - 'go.mod'
       - 'go.sum'
 

@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - 'development/image-cleaner/**'
-      - '.github/workflows/image-cleaner.yml'
+      - '.github/workflows/build-image-cleaner.yml'
       - 'go.mod'
       - 'go.sum'
 
