@@ -86,5 +86,5 @@ jobs:
       - name: Run ansible playbook
         working-directory: ./configs/ansible
         run: |
-          ansible-playbook -i ~/.ssh/id_rsa playbook.yml
+          ansible-playbook --private-key=~/.ssh/id_rsa playbook.yml
       
