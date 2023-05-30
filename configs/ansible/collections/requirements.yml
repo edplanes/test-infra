@@ -1,0 +1,8 @@
+---
+collections:
+  - name: community.general
+  - name: hetzner.hcloud
+roles:
+  - src: geerlingguy.kubernetes
+  - src: geerlingguy.containerd
+  - src: geerlingguy.docker

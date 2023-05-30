@@ -1,7 +1,8 @@
 ---
 - hosts: default
-  become: yes
-  tasks:
+  become: true
+  tasks: 
+  
     - name: Update and upgrade apt packages
       apt:
         upgrade: yes
@@ -31,7 +32,7 @@
         path: /etc/sudoers
         state: present
         regexp: "^%deploy"
-        line: "%deploy ALL=(ALL) ALL"
+        line: "%deploy ALL=(ALL) NOPASSWD:ALL"
         validate: "/usr/sbin/visudo -cf %s"
 
     - name: Disable admin group in sudoers

@@ -15,15 +15,27 @@ resource "hcloud_network_subnet" "main" {
   ip_range     = "10.0.1.0/24"
 }
 
-resource "hcloud_load_balancer" "main" {
-  name               = "main"
-  load_balancer_type = "lb11"
-  network_zone       = "eu-central"
-}
+resource "hcloud_firewall" "control-plane" {
+  name = "control-plane"
+  rule {
+    direction = "in"
+    protocol  = "icmp"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
 
-resource "hcloud_load_balancer_network" "main" {
-  network_id       = hcloud_network.main.id
-  load_balancer_id = hcloud_load_balancer.main.id
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "80-85"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+
 }
 
 resource "hcloud_server" "main" {
@@ -84,7 +96,7 @@ data "cloudflare_zone" "kacpermalachowskipl" {
 resource "cloudflare_record" "root" {
   zone_id = data.cloudflare_zone.kacpermalachowskipl.id
   name    = "kacpermalachowski.pl"
-  value   = hcloud_load_balancer.main.ipv4
+  value   = hcloud_server.main.0.ipv4_address
   type    = "A"
   proxied = true
   ttl     = 1
@@ -93,7 +105,7 @@ resource "cloudflare_record" "root" {
 resource "cloudflare_record" "wildcard" {
   zone_id = data.cloudflare_zone.kacpermalachowskipl.id
   name    = "*.kacpermalachowski.pl"
-  value   = hcloud_load_balancer.main.ipv4
+  value   = hcloud_server.main.0.ipv4_address
   type    = "A"
   proxied = true
   ttl     = 1

@@ -63,17 +63,24 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f test-requirements.txt ]; then pip install -r test-requirements.txt; fi
 
-      - name: Install SSH key
+      - name: Install SSH private key
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           name: id_rsa
           known_hosts: unnecessary
 
+      - name: Install SSH public key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PUBLIC_KEY }}
+          name: id_rsa.pub
+          known_hosts: unnecessary
+
       - name: Install ansible dependencies
         working-directory: ./configs/ansible
         run: |
-          if [ -f requirements.yml ]; then ansible-galaxy install -r requirements.yml; fi
+          if [ -f collections/requirements.yml ]; then ansible-galaxy install -r collections/requirements.yml; fi
 
       - name: Run ansible playbook
         working-directory: ./configs/ansible
