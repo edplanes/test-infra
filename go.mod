@@ -3,7 +3,7 @@ module github.com/edplanes/test-infra
 go 1.20
 
 require (
-	github.com/hetznercloud/hcloud-go v1.45.1
+	github.com/hetznercloud/hcloud-go v1.46.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 )
