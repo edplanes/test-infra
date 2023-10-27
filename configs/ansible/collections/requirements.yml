@@ -1,9 +1,0 @@
----
-collections:
-  - name: community.general
-  - name: hetzner.hcloud
-  - name: ansible.posix
-roles:
-  - src: geerlingguy.kubernetes
-  - src: geerlingguy.containerd
-  - src: geerlingguy.docker

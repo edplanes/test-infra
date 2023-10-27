@@ -1,8 +1,0 @@
-plugin: hcloud
-compose:
-  kubernetes_role: "if 'main' in labels['role'] then 'control_plane' else 'node' endif"
-groups:
-  kubemaster: "'main' in labels['role']"
-  kubeworker: "'agent' in labels['role']"
-  data: "'data' in labels['role']"
-  kubernetes: "'main' in labels['role'] or 'agent' in labels['role']"
