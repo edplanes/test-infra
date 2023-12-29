@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/edplanes/test-infra/pkg/airports"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -66,10 +67,24 @@ func main() {
 		newAirports = append(newAirports, airport)
 	}
 
+	indexModel := mongo.IndexModel{
+		Keys: bson.D{
+			{Key: "icao", Value: "text"},
+			{Key: "name", Value: "text"},
+			{Key: "city", Value: "text"},
+		},
+	}
+
 	err = coll.Drop(context.TODO())
 	if err != nil {
 		log.Fatal("Cannot drop current airports")
 	}
+
+	_, err = coll.Indexes().CreateOne(context.TODO(), indexModel)
+	if err != nil {
+		log.Fatal("Cannot recreate indexes")
+	}
+
 	result, err := coll.InsertMany(context.TODO(), newAirports)
 	if err != nil {
 		log.Fatal("Cannot insert new airports")
