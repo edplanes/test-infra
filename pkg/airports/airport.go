@@ -1,13 +1,14 @@
 package airports
 
 type AirportLocation struct {
-	Latitude  float64 `json:"lat"`
-	Longitude float64 `json:"lon"`
-	Elevation int     `json:"elev"`
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+	Elevation int     `json:"elevation"`
 }
 
 type Airport struct {
 	ICAO     string          `json:"icao"`
+	IATA     string          `json:"iata"`
 	City     string          `json:"city"`
 	Location AirportLocation `json:"location"`
 	Name     string          `json:"name"`

@@ -9,6 +9,7 @@ import (
 
 func TestLoginFlowFactory() TestCase {
 	return TestCase{
+		Name: "Login flow",
 		Test: login,
 	}
 }

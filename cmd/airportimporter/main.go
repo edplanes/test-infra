@@ -1,30 +1,24 @@
 package main
 
 import (
-	"context"
+	"bytes"
+	"encoding/base64"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/edplanes/test-infra/pkg/airports"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var airportsUrl = "https://davidmegginson.github.io/ourairports-data/airports.csv"
 
 func main() {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
-	if err != nil {
-		log.Fatal("Failed to connect to mongodb")
-	}
-	defer client.Disconnect(context.TODO())
-
-	coll := client.Database("edplanes").Collection("airports")
 
 	resp, err := http.Get(airportsUrl)
 	if err != nil {
@@ -38,7 +32,7 @@ func main() {
 		log.Fatal("Failed to load airports database")
 	}
 
-	airports := []airports.Airport{}
+	airportsData := []airports.Airport{}
 	for i := 0; i < len(data); i++ {
 		if i == 0 {
 			err := verifyDataStructure(data[i])
@@ -59,38 +53,75 @@ func main() {
 			continue
 		}
 
-		airports = append(airports, airport)
+		airportsData = append(airportsData, airport)
 	}
 
 	newAirports := make([]interface{}, 0)
-	for _, airport := range airports {
+	for _, airport := range airportsData {
 		newAirports = append(newAirports, airport)
 	}
 
-	indexModel := mongo.IndexModel{
-		Keys: bson.D{
-			{Key: "icao", Value: "text"},
-			{Key: "name", Value: "text"},
-			{Key: "city", Value: "text"},
-		},
-	}
-
-	err = coll.Drop(context.TODO())
+	jsonAirport, err := json.Marshal(newAirports)
 	if err != nil {
-		log.Fatal("Cannot drop current airports")
+		log.Fatal("Failed to marshal airports to json", err)
 	}
 
-	_, err = coll.Indexes().CreateOne(context.TODO(), indexModel)
+	fmt.Print(string(jsonAirport))
+	log.Printf("Found %d airports, importing to system...", len(newAirports))
+
+	token, err := authenticateAgainstSystem("admin@localhost.com", "admin")
 	if err != nil {
-		log.Fatal("Cannot recreate indexes")
+		log.Fatal("Failed to authenticate", err)
 	}
 
-	result, err := coll.InsertMany(context.TODO(), newAirports)
+	req, err := http.NewRequest("POST", "http://localhost:8080/api/airports/import", bytes.NewReader(jsonAirport))
 	if err != nil {
-		log.Fatal("Cannot insert new airports")
+		log.Fatal("Failed to create import request", err)
 	}
 
-	fmt.Println(result, len(airports))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer "+token)
+
+	resp, err = http.DefaultClient.Do(req)
+	if err != nil {
+		log.Fatal("Failed to import", err)
+	}
+
+	response, _ := io.ReadAll(resp.Body)
+
+	log.Print(string(response))
+
+	log.Println("Done, imported ", len(newAirports), " airports")
+}
+
+func authenticateAgainstSystem(username, password string) (string, error) {
+	type authInfo struct {
+		Token string `json:"token"`
+	}
+	data := fmt.Sprintf("%s:%s", username, password)
+	encoded := base64.StdEncoding.EncodeToString([]byte(data))
+
+	req, err := http.NewRequest("GET", "http://localhost:8080/api/auth", nil)
+	if err != nil {
+		return "", err
+	}
+
+	req.Header.Add("Authorization", fmt.Sprintf("Basic %s", encoded))
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+
+	var authInfoData authInfo
+	err = json.NewDecoder(res.Body).Decode(&authInfoData)
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Print(authInfoData)
+
+	return authInfoData.Token, nil
 }
 
 func shouldAddAirport(airport airports.Airport) bool {
@@ -160,7 +191,8 @@ func parseAirportData(data []string) (airports.Airport, error) {
 	}
 
 	return airports.Airport{
-		ICAO: data[1],
+		ICAO: strings.ToUpper(data[1]),
+		IATA: strings.ToUpper(data[13]),
 		City: data[10],
 		Location: airports.AirportLocation{
 			Latitude:  latitude,
